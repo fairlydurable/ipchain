@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 <getip | getgeo | getweather>"
+    exit 1
+fi
+
+if [ "$1" = "getip" ]; then
+    java -cp .:classes chain_example.IPAddressFinder
+elif [ "$1" = "getgeo" ]; then
+    latitude_longitude=$(java -cp .:classes:source/json-java.jar chain_example.IPAddressFinder |
+    xargs -I {} java -cp .:classes:source/json-java.jar chain_example.GeolocationFetcher {})
+    echo "$latitude_longitude"
+elif [ "$1" = "getweather" ]; then
+    if [ $# -ne 1 ]; then
+        echo "Usage: $0 getweather"
+        exit 1
+    fi
+    latitude_longitude=$(java -cp .:classes:source/json-java.jar chain_example.IPAddressFinder |
+    xargs -I {} java -cp .:classes:source/json-java.jar chain_example.GeolocationFetcher {})
+    echo "$latitude_longitude" | xargs -n 2 java -cp .:classes:source/json-java.jar \
+    chain_example.WeatherFetcher
+else
+    echo "Usage: $0 <getip | getgeo | getweather>"
+    exit 1
+fi

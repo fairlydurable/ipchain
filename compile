@@ -1,0 +1,13 @@
+#! /bin/bash
+
+# Compile and install all java sources in ./source
+
+# Exit on error
+set -e
+
+# Compile in the sources file and run install
+pushd source > /dev/null
+javac -cp .:json-java.jar *.java
+mv *.class ../classes/chain_example/
+popd > /dev/null
+echo "Compiled and installed."
